@@ -1,0 +1,105 @@
+﻿@model IEnumerable<FilmsActors.Models.Film>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<form action="" class="form-inline">
+    <div class="form-group">
+        <h2 style="margin-right:10px">Films List</h2>
+    
+        <div class="form-group">
+            <label for="SearchTitle" class="control-label"></label>
+            <input name="SearchTitle" class="form-control" placeholder="Input title of film you need to find" size="100" style="margin-right:10px" />
+        </div>
+        <button type="submit" asp-action="ShowSearchResults" class="form-group">Search</button>
+        </div>
+</form>
+
+<form>
+    <a style="margin-right:20px" asp-action="Create">Create New</a>
+    <t>Orders:</t>
+    <button type="submit" asp-action="AlphabeticalView">Alphabetical</button>
+    <button type="submit" asp-action="ReleaseDateView">ReleaseDate</button>
+    <button type="submit" asp-action="PopularityView">Popularity</button>
+</form>
+<table class="table">
+    <thead>
+        <tr>
+            <td>
+                <t>Rating</t>
+            </td>
+            <th>
+                @Html.DisplayNameFor(model => model.PosRating)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.NegRating)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Title)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ReleaseDate)
+            </th>
+            <th>
+                <t>Like</t>
+            </th>
+            <th>
+                <t>Dislike</t>
+            </th>
+
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            float Rating;
+            if (item.PosRating == 0)
+            {
+                Rating = (item.PosRating + 1) / (item.PosRating + 1 + item.NegRating);
+            }
+            else
+            {
+                Rating = (float)item.PosRating / (float)(item.PosRating + item.NegRating);
+            }
+            Rating *= 100;
+            Rating = (float)System.Math.Round(Rating, 2);
+
+
+            <tr>
+                <td>
+                    @if (item.NegRating == 0 && item.PosRating == 0)
+                    { <t>None</t>}
+                    else
+                    {<t>@Rating%</t>}
+                    
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.PosRating)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.NegRating)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Title)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ReleaseDate)
+                </td>
+                <th>
+                    <a asp-action="PlusRating" asp-route-id="@item.ID">👍</a>
+                </th>
+                <th>
+                    <a asp-action="MinusRating" asp-route-id="@item.ID">👎</a>
+                </th>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.ID">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.ID">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@item.ID">Delete</a> |
+                    <a asp-action="ActorsIncluded" asp-route-id="@item.ID">ActorsInFilm</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
